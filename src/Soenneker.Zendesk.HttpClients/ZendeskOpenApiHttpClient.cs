@@ -11,7 +11,7 @@ using Soenneker.Utils.HttpClientCache.Abstract;
 
 namespace Soenneker.Zendesk.HttpClients;
 
-///<inheritdoc cref="IZendeskOpenApiHttpClient"/>
+/// <inheritdoc cref="IZendeskOpenApiHttpClient"/>
 public sealed class ZendeskOpenApiHttpClient : IZendeskOpenApiHttpClient
 {
     private readonly IHttpClientCache _httpClientCache;
