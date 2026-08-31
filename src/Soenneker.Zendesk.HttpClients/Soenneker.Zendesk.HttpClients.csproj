@@ -9,7 +9,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <Description>A thread-safe singleton HttpClient for Zendesk's OpenAPI integration.</Description>
+        <Description>Provides a cached HTTP client configured for a Zendesk account and authentication credential.</Description>
         <Version Condition="'$(BUILD_VERSION)' == ''">4.0.0</Version>
         <Version Condition="'$(BUILD_VERSION)' != ''">$(BUILD_VERSION)</Version>
         <AssemblyName>Soenneker.Zendesk.HttpClients</AssemblyName>

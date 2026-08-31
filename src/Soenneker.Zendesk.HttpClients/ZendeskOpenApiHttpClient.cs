@@ -11,13 +11,11 @@ using Soenneker.Utils.HttpClientCache.Abstract;
 
 namespace Soenneker.Zendesk.HttpClients;
 
-/// <inheritdoc cref="IZendeskOpenApiHttpClient"/>
 public sealed class ZendeskOpenApiHttpClient : IZendeskOpenApiHttpClient
 {
     private readonly IHttpClientCache _httpClientCache;
     private readonly IConfiguration _config;
-
-    private const string _prodBaseUrl = "https://example.zendesk.com";
+    private readonly string _clientId = $"{nameof(ZendeskOpenApiHttpClient)}:{Guid.NewGuid():N}";
 
     public ZendeskOpenApiHttpClient(IHttpClientCache httpClientCache, IConfiguration config)
     {
@@ -27,7 +25,7 @@ public sealed class ZendeskOpenApiHttpClient : IZendeskOpenApiHttpClient
 
     public ValueTask<HttpClient> Get(CancellationToken cancellationToken = default)
     {
-        return _httpClientCache.Get(nameof(ZendeskOpenApiHttpClient), (config: _config, baseUrl: _config["Zendesk:ClientBaseUrl"] ?? _prodBaseUrl), static state =>
+        return _httpClientCache.Get(_clientId, (config: _config, baseUrl: _config.GetValueStrict<string>("Zendesk:ClientBaseUrl")), static state =>
         {
             var apiKey = state.config.GetValueStrict<string>("Zendesk:Credentials");
             string authHeaderName = state.config["Zendesk:AuthHeaderName"] ?? "Authorization";
@@ -36,7 +34,7 @@ public sealed class ZendeskOpenApiHttpClient : IZendeskOpenApiHttpClient
 
             return new HttpClientOptions
             {
-                BaseAddress = new Uri(state.baseUrl),
+                BaseAddress = new Uri(state.baseUrl, UriKind.Absolute),
                 DefaultRequestHeaders = new Dictionary<string, string>
                 {
                     {authHeaderName, authHeaderValue},
@@ -47,11 +45,11 @@ public sealed class ZendeskOpenApiHttpClient : IZendeskOpenApiHttpClient
 
     public void Dispose()
     {
-        _httpClientCache.RemoveSync(nameof(ZendeskOpenApiHttpClient));
+        _httpClientCache.RemoveSync(_clientId);
     }
 
     public ValueTask DisposeAsync()
     {
-        return _httpClientCache.Remove(nameof(ZendeskOpenApiHttpClient));
+        return _httpClientCache.Remove(_clientId);
     }
 }
