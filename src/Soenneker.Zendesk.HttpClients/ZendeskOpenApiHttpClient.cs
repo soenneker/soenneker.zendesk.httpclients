@@ -26,9 +26,9 @@ public sealed class ZendeskOpenApiHttpClient : IZendeskOpenApiHttpClient
 
     public ValueTask<HttpClient> Get(CancellationToken cancellationToken = default)
     {
-        return _httpClientCache.Get(_clientId, (config: _config, baseUrl: _config.GetValueStrict<string>("Zendesk:ClientBaseUrl")), static state =>
+        return _httpClientCache.Get(_clientId, (config: _config, baseUrl: _config.GetStringStrict("Zendesk:ClientBaseUrl")), static state =>
         {
-            var apiKey = state.config.GetValueStrict<string>("Zendesk:Credentials");
+            var apiKey = state.config.GetStringStrict("Zendesk:Credentials");
             string authHeaderName = state.config["Zendesk:AuthHeaderName"] ?? "Authorization";
             string authHeaderValueTemplate = state.config["Zendesk:AuthHeaderValueTemplate"] ?? "Basic {token}";
             string authHeaderValue = authHeaderValueTemplate.Replace("{token}", apiKey, StringComparison.Ordinal);
